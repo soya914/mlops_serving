@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="1200" height="380" role="img" aria-label="Iris Classifier - MLOps Serving Pipeline">
+  <title>Iris Classifier &#8212; MLOps Serving</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0d14"/><stop offset="100%" stop-color="#170f2e"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c4b5fd"><animate attributeName="stop-color" values="#c4b5fd;#f0abfc;#93c5fd;#c4b5fd" dur="8s" repeatCount="indefinite"/></stop>
+      <stop offset="50%" stop-color="#f0abfc"><animate attributeName="stop-color" values="#f0abfc;#93c5fd;#c4b5fd;#f0abfc" dur="8s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#93c5fd"><animate attributeName="stop-color" values="#93c5fd;#c4b5fd;#f0abfc;#93c5fd" dur="8s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="petalA" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#c4b5fd"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+    <linearGradient id="petalB" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#f5d0fe"/><stop offset="55%" stop-color="#d946ef"/><stop offset="100%" stop-color="#86198f"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7c3aed"/><stop offset="55%" stop-color="#d946ef"/><stop offset="100%" stop-color="#d946ef" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.42"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="46"/>
+    </filter>
+    <clipPath id="card"><rect width="1200" height="380" rx="22"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#card)">
+    <rect width="1200" height="380" fill="url(#bg)"/>
+
+    <g filter="url(#soft)" opacity="0.55">
+      <ellipse cx="240" cy="330" rx="230" ry="120" fill="#7c3aed">
+        <animate attributeName="cx" values="240;360;240" dur="14s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="900" cy="60" rx="220" ry="130" fill="#d946ef">
+        <animate attributeName="cy" values="60;140;60" dur="11s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="640" cy="200" rx="180" ry="100" fill="#2563eb">
+        <animate attributeName="cx" values="640;540;640" dur="17s" repeatCount="indefinite"/>
+      </ellipse>
+    </g>
+
+    <g fill="#c4b5fd">
+      <circle cx="120" cy="60" r="2.5"><animate attributeName="opacity" values="0.2;1;0.2" dur="3.1s" repeatCount="indefinite"/></circle>
+      <circle cx="300" cy="42" r="2"><animate attributeName="opacity" values="1;0.2;1" dur="4.3s" repeatCount="indefinite"/></circle>
+      <circle cx="520" cy="70" r="2.5"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="5.2s" repeatCount="indefinite"/></circle>
+      <circle cx="700" cy="330" r="2"><animate attributeName="opacity" values="0.9;0.2;0.9" dur="3.7s" repeatCount="indefinite"/></circle>
+      <circle cx="1090" cy="312" r="2.5"><animate attributeName="opacity" values="0.2;1;0.2" dur="4.9s" repeatCount="indefinite"/></circle>
+      <circle cx="60" cy="210" r="2"><animate attributeName="opacity" values="0.8;0.1;0.8" dur="6.1s" repeatCount="indefinite"/></circle>
+    </g>
+
+    <g transform="translate(985,190)">
+      <circle r="140" fill="url(#coreGlow)">
+        <animate attributeName="r" values="130;152;130" dur="5s" repeatCount="indefinite"/>
+      </circle>
+
+      <g opacity="0.5">
+        <circle r="118" fill="none" stroke="#c4b5fd" stroke-width="1.2" stroke-dasharray="5 9"/>
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="18s" repeatCount="indefinite"/>
+          <circle cx="118" cy="0" r="5" fill="#22c55e"/>
+          <circle cx="-59" cy="102" r="5" fill="#38bdf8"/>
+          <circle cx="-59" cy="-102" r="5" fill="#f59e0b"/>
+        </g>
+      </g>
+
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+        <g transform="rotate(0)"><ellipse cy="-58" rx="28" ry="58" fill="url(#petalA)" opacity="0.96"/></g>
+        <g transform="rotate(60)"><ellipse cy="-58" rx="28" ry="58" fill="url(#petalB)" opacity="0.88"/></g>
+        <g transform="rotate(120)"><ellipse cy="-58" rx="28" ry="58" fill="url(#petalA)" opacity="0.92"/></g>
+        <g transform="rotate(180)"><ellipse cy="-58" rx="28" ry="58" fill="url(#petalB)" opacity="0.84"/></g>
+        <g transform="rotate(240)"><ellipse cy="-58" rx="28" ry="58" fill="url(#petalA)" opacity="0.92"/></g>
+        <g transform="rotate(300)"><ellipse cy="-58" rx="28" ry="58" fill="url(#petalB)" opacity="0.88"/></g>
+      </g>
+      <circle r="22" fill="#fbbf24"/>
+      <circle r="11" fill="#f59e0b">
+        <animate attributeName="r" values="11;14;11" dur="2.6s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <text x="70" y="150" font-family="ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif" font-size="72" font-weight="800" letter-spacing="-2" fill="url(#titleGrad)">Iris Classifier</text>
+
+    <rect x="70" y="172" width="90" height="5" rx="2.5" fill="url(#rule)">
+      <animate attributeName="width" values="90;300;90" dur="6s" repeatCount="indefinite"/>
+    </rect>
+
+    <text x="70" y="222" font-family="ui-sans-serif,-apple-system,Segoe UI,Roboto,Malgun Gothic,Apple SD Gothic Neo,sans-serif" font-size="24" fill="#a5adba">붓꽃 분류 모델 서빙 · CI/CD 자동화 파이프라인</text>
+    <text x="70" y="256" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="16" fill="#7c6f9c">git push &#8594; train &#8594; test &#8594; build &#8594; deploy &#8594; verify</text>
+
+    <g font-family="ui-sans-serif,-apple-system,Segoe UI,Roboto,sans-serif" font-size="18" font-weight="600">
+      <rect x="70" y="286" width="110" height="40" rx="20" fill="#1e1633" stroke="#3b2d63"/>
+      <text x="125" y="312" fill="#ddd6fe" text-anchor="middle">FastAPI</text>
+      <rect x="190" y="286" width="102" height="40" rx="20" fill="#1e1633" stroke="#3b2d63"/>
+      <text x="241" y="312" fill="#ddd6fe" text-anchor="middle">Docker</text>
+      <rect x="302" y="286" width="176" height="40" rx="20" fill="#1e1633" stroke="#3b2d63"/>
+      <text x="390" y="312" fill="#ddd6fe" text-anchor="middle">GitHub Actions</text>
+      <rect x="488" y="286" width="84" height="40" rx="20" fill="#1e1633" stroke="#3b2d63"/>
+      <text x="530" y="312" fill="#ddd6fe" text-anchor="middle">GCP</text>
+    </g>
+  </g>
+  <rect x="0.75" y="0.75" width="1198.5" height="378.5" rx="22" fill="none" stroke="#2a2145" stroke-width="1.5"/>
+</svg>
