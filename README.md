@@ -1,145 +1,158 @@
-# 3일차 - GCP 외부 배포
+<div align="center">
 
-## 이미지
+# 🌸 Iris Classifier — MLOps Serving
 
-- Docker Hub: `soya14/iris-classifier:v1` (public, linux/amd64)
-- digest: `sha256:05e2b82ac138...`
+**붓꽃 분류 모델을 FastAPI로 서빙하고, `git push` 한 번으로 학습 → 테스트 → 이미지 빌드 → GCP 배포까지 자동으로 굴리는 프로젝트**
 
-## 로컬 환경 주의
+[![CI/CD](https://github.com/soya914/mlops_serving/actions/workflows/main.yml/badge.svg)](https://github.com/soya914/mlops_serving/actions/workflows/main.yml)
+[![Docker Image](https://img.shields.io/docker/v/soya14/iris-classifier?label=docker%20hub&logo=docker&color=2496ED)](https://hub.docker.com/r/soya14/iris-classifier)
+[![Python](https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 
-이 PC의 **Docker Desktop은 고장 상태**(삭제 불가 소켓 파일). 도커는 WSL Ubuntu 안의 엔진을 쓴다.
-
-```
-wsl -d Ubuntu -u root -- /usr/bin/docker <명령>
-```
-
-`docker`만 치면 고장난 Docker Desktop CLI가 잡히므로 **`/usr/bin/docker`** 경로를 붙일 것.
-
-## 재빌드 / 재푸시
-
-```
-wsl -d Ubuntu -u root -- sh -c "cd '/mnt/c/Users/leeso/클로드자동화/mlops-day3' && /usr/bin/docker build -t soya14/iris-classifier:v1 . && /usr/bin/docker push soya14/iris-classifier:v1"
-```
-
-## GCP VM 설정 (Windows 빌드 기준)
-
-| 항목 | 값 |
-|---|---|
-| 머신 유형 | e2-micro |
-| 리전 | us-central1 (아이오와) — 무료 대상 |
-| 아키텍처 | **x86/64** |
-| 디스크 | 표준 영구 디스크 |
-| 스냅샷 | **백업 없음** (요금 방지) |
-
-## VM 안에서 실행
-
-```
-sudo apt-get update
-sudo apt-get install -y docker.io
-sudo systemctl enable --now docker
-sudo docker pull soya14/iris-classifier:v1
-sudo docker run -d -p 80:8000 soya14/iris-classifier:v1
-sudo docker ps
-```
-
-접속: `http://<외부IP>/docs`  ← **https 아님**
-
-## API
-
-| 메서드 | 경로 | 요청 | 응답 |
-|---|---|---|---|
-| GET | `/` | - | `{"message": "..."}` |
-| GET | `/health` | - | `{"status":"ok"}` |
-| POST | `/predict` | `{"data":[5.1,3.5,1.4,0.2]}` | `{"class_index":0,"class_name":"setosa"}` |
-
-## 프론트엔드
-
-`streamlit_app.py` 의 `API_URL` 을 VM 외부 IP로 바꾼 뒤:
-
-```
-streamlit run streamlit_app.py
-```
-
-## 4일차 끝나면
-
-- VM **중지 및 삭제**
-- 스냅샷 일정 전부 삭제
-- 유료 계정 활성화했다면 **비활성화**
+</div>
 
 ---
 
-## 실제 배포 결과 (2026-08-27)
+## 무엇을 하나요
 
-| 항목 | 값 |
-|---|---|
-| 프로젝트 | `bold-guru-501604-b2` |
-| 인스턴스 | `iris-vm` / us-central1-a / e2-micro |
-| 외부 IP | `34.44.197.207` |
-| API 문서 | http://34.44.197.207/docs |
-| 스트림릿 | http://34.44.197.207:8501 |
-| 방화벽 | `default-allow-http` (tcp:80), `allow-streamlit-8501` (tcp:8501) — 둘 다 tag `http-server` |
-| swap | 1GB (`/swapfile`, fstab 등록됨) |
+`main` 브랜치에 푸시하면 사람 손 없이 여기까지 갑니다.
 
-### 컨테이너 2개 구성
+```mermaid
+flowchart LR
+    A["git push"] --> B["모델 학습<br/>train.py"]
+    B --> C{"테스트<br/>정확도 ≥ 0.95"}
+    C -- 실패 --> X["🛑 여기서 중단<br/>배포 안 함"]
+    C -- 통과 --> D["이미지 2개 빌드"]
+    D --> E["Docker Hub 푸시"]
+    E --> F["GCP VM SSH 배포"]
+    F --> G{"/health 응답?"}
+    G -- 무응답 --> Y["🛑 실패 처리"]
+    G -- 정상 --> Z["✅ 배포 완료"]
 
-한 VM에 백엔드·프론트엔드를 같이 올렸다. 인스턴스를 늘리면 무료 등급(e2-micro 1대)을 벗어나므로.
-
-| 이미지 | 포트 | 역할 |
-|---|---|---|
-| `soya14/iris-classifier:v1` | 80 → 8000 | FastAPI + 모델 |
-| `soya14/iris-frontend:v1` | 8501 → 8501 | 스트림릿 UI |
-
-프론트엔드는 `API_URL` 환경변수로 백엔드를 찾는다. 같은 VM 안이라 도커 브리지 게이트웨이
-`http://172.17.0.1/predict` 를 쓴다 — 외부 IP로 나갔다 오지 않아 IP가 바뀌어도 안 깨진다.
-
-```
-sudo docker run -d -p 8501:8501 -e API_URL=http://172.17.0.1/predict soya14/iris-frontend:v1
+    style X fill:#ffe0e0,stroke:#d33
+    style Y fill:#ffe0e0,stroke:#d33
+    style Z fill:#e0ffe6,stroke:#2a2
 ```
 
-### 관리 명령어
+핵심은 **어느 단계든 깨지면 그 앞에서 멈춘다**는 것입니다. 정확도가 떨어진 모델이나 빌드가 깨진 이미지가 운영 서버까지 흘러가지 않습니다.
 
-```
-gcloud compute instances stop iris-vm --zone=us-central1-a      # 중지
-gcloud compute instances start iris-vm --zone=us-central1-a     # 재시작 (외부 IP 바뀜)
-gcloud compute instances delete iris-vm --zone=us-central1-a    # 삭제
-```
+## 구성
 
-### 다시 켤 때
+한 대의 GCP VM(e2-micro, 무료 등급) 안에 컨테이너 2개가 돕니다.
 
-두 컨테이너 모두 `--restart unless-stopped` 가 걸려 있고 docker 도 부팅 시 자동 시작이라,
-**VM 만 켜면 서비스가 알아서 올라온다.** (재부팅 테스트로 검증 완료)
-
-```
-gcloud compute instances start iris-vm --zone=us-central1-a
-gcloud compute instances describe iris-vm --zone=us-central1-a --format="get(networkInterfaces[0].accessConfigs[0].natIP)"
-```
-
-두 번째 명령으로 **새 외부 IP** 를 확인한다. 중지하면 임시 IP 가 반납되므로 켤 때마다 바뀐다.
-스트림릿은 백엔드를 내부 주소(`172.17.0.1`)로 부르기 때문에 IP 가 바뀌어도 안 깨진다.
-로컬에서 `streamlit_app.py` 를 돌릴 때만 `API_URL` 을 새 IP 로 바꾸면 된다.
-
-수동으로 다시 띄워야 한다면:
-
-```
-gcloud compute ssh iris-vm --zone=us-central1-a --command="sudo docker run -d -p 80:8000 soya14/iris-classifier:v1; sudo docker run -d -p 8501:8501 -e API_URL=http://172.17.0.1/predict soya14/iris-frontend:v1"
+```mermaid
+flowchart TB
+    subgraph GCP["GCP VM · e2-micro · us-central1"]
+        direction TB
+        F["🖥️ iris-front<br/>Streamlit<br/>:8501"]
+        B["⚙️ iris-api<br/>FastAPI + model.joblib<br/>:80 → :8000"]
+        F -- "http://172.17.0.1/predict<br/>(도커 브리지)" --> B
+    end
+    U["👤 사용자"] --> F
+    U -- "직접 호출 / Swagger" --> B
 ```
 
-### 프론트엔드 재빌드
+프론트엔드는 백엔드를 **외부 IP가 아닌 도커 브리지 게이트웨이**로 부릅니다. VM을 껐다 켜서 외부 IP가 바뀌어도 안 깨지게 하기 위해서입니다.
+
+## API
+
+베이스 URL: `http://<VM 외부 IP>` — **`https` 아닙니다**
+
+| 메서드 | 경로 | 요청 | 응답 |
+|:---|:---|:---|:---|
+| `GET` | `/` | — | `{"message": "Iris Classifier API is running"}` |
+| `GET` | `/health` | — | `{"status": "ok"}` |
+| `GET` | `/docs` | — | Swagger UI |
+| `POST` | `/predict` | `{"data": [5.1, 3.5, 1.4, 0.2]}` | `{"class_index": 0, "class_name": "setosa"}` |
+
+`data`는 `[꽃받침 길이, 꽃받침 너비, 꽃잎 길이, 꽃잎 너비]` 순서의 실수 4개입니다.
+
+```bash
+curl -X POST http://<VM IP>/predict \
+  -H "Content-Type: application/json" \
+  -d '{"data":[6.7,3.0,5.2,2.3]}'
+# → {"class_index":2,"class_name":"virginica"}
+```
+
+## 로컬에서 돌려보기
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+python train.py          # model.joblib 생성
+pytest                   # 테스트 5개
+uvicorn main:app --reload
+```
+
+`http://127.0.0.1:8000/docs` 로 접속하면 Swagger UI가 뜹니다.
+
+도커로 띄우려면:
+
+```bash
+docker build -t iris-classifier .
+docker run -d -p 8000:8000 iris-classifier
+```
+
+## 자동화 파이프라인
+
+`.github/workflows/main.yml` 하나에 3개의 job 이 순서대로 물려 있습니다.
+
+| Job | 하는 일 | 실패하면 |
+|:---|:---|:---|
+| `train-and-test` | 모델 학습 → API 응답 테스트 → 정확도 게이트(≥ 0.95) | 빌드 안 함 |
+| `build-and-push` | 백엔드·프론트 이미지 빌드 → Docker Hub 푸시 (`:latest`, `:커밋해시`) | 배포 안 함 |
+| `deploy` | VM에 SSH → pull → 컨테이너 교체 → `/health` 확인 | 워크플로 빨간불 |
+
+학습된 `model.joblib` 은 artifact 로 다음 job 에 넘어가서 이미지 안에 그대로 들어갑니다.
+즉 **배포된 이미지에 담긴 모델 = 방금 테스트를 통과한 그 모델** 입니다.
+
+### 필요한 시크릿 5개
+
+| 이름 | 설명 |
+|:---|:---|
+| `DOCKERHUB_USERNAME` | Docker Hub 아이디 |
+| `DOCKERHUB_TOKEN` | Docker Hub 액세스 토큰 (**Read & Write**) |
+| `GCP_VM_HOST` | VM 외부 IP |
+| `GCP_VM_USERNAME` | VM SSH 계정명 |
+| `GCP_SSH_KEY` | 배포용 SSH 개인키 전문 |
+
+> ⚠️ VM을 껐다 켜면 외부 IP가 바뀝니다. `bash scripts/update-vm-host.sh` 로 `GCP_VM_HOST` 를 갱신하세요.
+
+## 폴더 구조
 
 ```
-wsl -d Ubuntu -u root -- sh -c "cd '/mnt/c/Users/leeso/클로드자동화/mlops-day3' && /usr/bin/docker build -f Dockerfile.frontend -t soya14/iris-frontend:v1 . && /usr/bin/docker push soya14/iris-frontend:v1"
+.
+├── .github/workflows/main.yml   # CI/CD 파이프라인
+├── main.py                      # FastAPI 서버
+├── train.py                     # 모델 학습
+├── streamlit_app.py             # 프론트엔드
+├── model.joblib                 # 학습된 모델 (CI가 매번 새로 만듦)
+├── Dockerfile                   # 백엔드 이미지
+├── Dockerfile.frontend          # 프론트 이미지
+├── tests/test_api.py            # API 응답 + 정확도 게이트
+├── scripts/update-vm-host.sh    # VM IP 바뀌었을 때 시크릿 갱신
+├── docs/
+│   ├── DAY3.md                  # GCP 수동 배포 기록
+│   └── DAY4.md                  # CI/CD 구축 + 트러블슈팅
+└── captures/                    # 실행 결과 캡처
 ```
 
-## 요금
+## 문서
 
-- **VM 본체**: `us-central1` e2-micro 1대 + 표준 디스크 30GB 까지 Always Free. 지금 구성이 그 안에 있다.
-- **외부 IPv4**: 2024-02 부터 과금 대상. 무료 제공량이 계정당 월 1시간뿐이라 사실상 전액 과금.
-  단 **임시 IP 는 VM 이 running 일 때만** 과금된다. 중지하면 IP 가 반납되면서 요금도 멈춘다.
-- 인스턴스를 하나 더 만들면 두 번째부터 정가 과금(대략 월 $6~7 + IP).
+| 문서 | 내용 |
+|:---|:---|
+| [docs/DAY4.md](docs/DAY4.md) | **CI/CD 구축** — 시크릿 설정, 흔한 실패 원인과 해결 |
+| [docs/DAY3.md](docs/DAY3.md) | GCP VM 수동 배포 기록, 요금 관리, 재시작 절차 |
 
-**따라서 안 쓸 땐 `stop`.** 디스크는 무료 등급 안이라 그대로 보존된다.
-수업이 완전히 끝나면 `delete`.
+## 이미지
 
-### 현재 상태 (2026-08-27)
+| 이미지 | 역할 |
+|:---|:---|
+| [`soya14/iris-classifier`](https://hub.docker.com/r/soya14/iris-classifier) | FastAPI + 모델 |
+| [`soya14/iris-frontend`](https://hub.docker.com/r/soya14/iris-frontend) | Streamlit UI |
 
-`iris-vm` **중지됨(TERMINATED)** — 외부 IP 반납, 과금 멈춤. 디스크와 이미지는 보존.
+---
+
+<div align="center">
+<sub>붓꽃 데이터셋 · RandomForestClassifier · scikit-learn</sub>
+</div>
