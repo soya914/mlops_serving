@@ -29,7 +29,7 @@ jobs:
         run: python train.py
 
       - name: 테스트 (API 응답 + 정확도 0.95 이상)
-        run: pytest -q
+        run: python -m pytest -q
 
       # 방금 학습한 model.joblib 을 다음 job 으로 넘긴다.
       # 이렇게 해야 "학습 → 이미지에 담기" 가 한 파이프라인으로 이어진다.

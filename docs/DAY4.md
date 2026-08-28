@@ -135,4 +135,5 @@ git push
 | `dial tcp ...: i/o timeout` | VM 이 꺼져 있거나 **IP 가 바뀜** (위 ⚠️ 참조) |
 | `error parsing private key` | 개인키 복사할 때 BEGIN/END 줄이나 줄바꿈 누락 |
 | `port is already allocated` | 옛 컨테이너가 안 지워짐 (포트 필터로 해결) |
+| `ModuleNotFoundError: No module named 'main'` | 로컬은 `python -m pytest`(CWD 를 import 경로에 넣음), CI 는 `pytest`(안 넣음). `pytest.ini` 의 `pythonpath = .` 로 고정 |
 | health check 실패 | 방화벽 `tcp:80` 규칙 / 컨테이너가 뜨자마자 죽음 → VM 에서 `sudo docker logs iris-api` |
