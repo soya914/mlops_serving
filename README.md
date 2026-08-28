@@ -11,7 +11,7 @@
 [![CI/CD](https://img.shields.io/github/actions/workflow/status/soya914/mlops_serving/main.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI%2FCD)](https://github.com/soya914/mlops_serving/actions/workflows/main.yml)
 [![Docker Image](https://img.shields.io/docker/v/soya14/iris-classifier?style=for-the-badge&logo=docker&logoColor=white&label=image&color=2496ED)](https://hub.docker.com/r/soya14/iris-classifier)
 [![Last Commit](https://img.shields.io/github/last-commit/soya914/mlops_serving?style=for-the-badge&logo=git&logoColor=white&color=F05032)](https://github.com/soya914/mlops_serving/commits/main)
-[![Repo Size](https://img.shields.io/github/repo-size/soya914/mlops_serving?style=for-the-badge&color=8957e5)](https://github.com/soya914/mlops_serving)
+[![Top Language](https://img.shields.io/github/languages/top/soya914/mlops_serving?style=for-the-badge&logo=python&logoColor=white&color=8957e5)](https://github.com/soya914/mlops_serving)
 
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
