@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 4. 모델 파일과 API 코드를 컨테이너 안으로 복사
 COPY main.py .
 COPY model.joblib .
+# /model-info 가 읽는다. 없어도 서비스는 뜨지만 있으면 어떤 모델인지 확인할 수 있다.
+COPY metrics.json .
 
 # 5. 서버 실행 명령 (8000 포트)
 EXPOSE 8000

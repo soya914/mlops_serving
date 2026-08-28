@@ -1,0 +1,27 @@
+{
+  "best_model": "logistic_regression",
+  "cv_accuracy": 0.9583,
+  "holdout_accuracy": 0.9333,
+  "cv_accuracy_all_candidates": {
+    "random_forest_100": 0.95,
+    "random_forest_300_depth3": 0.95,
+    "logistic_regression": 0.9583
+  },
+  "n_train": 120,
+  "n_holdout": 30,
+  "cv_folds": 5,
+  "random_state": 42,
+  "class_names": [
+    "setosa",
+    "versicolor",
+    "virginica"
+  ],
+  "feature_names": [
+    "sepal_length",
+    "sepal_width",
+    "petal_length",
+    "petal_width"
+  ],
+  "sklearn_version": "1.9.0",
+  "trained_at": "2026-08-28T02:49:51+00:00"
+}
