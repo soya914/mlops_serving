@@ -1,0 +1,16 @@
+# 스트림릿 프론트엔드
+FROM python:3.13-slim
+
+WORKDIR /root/mlops_frontend
+
+COPY requirements-frontend.txt .
+RUN pip install --no-cache-dir -r requirements-frontend.txt
+
+COPY streamlit_app.py .
+
+EXPOSE 8501
+
+# API_URL 은 실행 시 -e 로 덮어쓴다
+CMD ["streamlit", "run", "streamlit_app.py", \
+     "--server.port=8501", "--server.address=0.0.0.0", \
+     "--server.headless=true", "--browser.gatherUsageStats=false"]

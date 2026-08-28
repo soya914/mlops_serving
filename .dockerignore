@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.git/
+.github/
+.pytest_cache/
+captures/
+tests/
+docs/
+scripts/
+train.py
+README.md
+typescript
