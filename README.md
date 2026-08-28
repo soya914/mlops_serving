@@ -150,7 +150,7 @@ flowchart LR
 
 <div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
 
-## 🏗️ 아키텍처
+## 🏗 아키텍처
 
 무료 등급 `e2-micro` **한 대** 안에서 컨테이너 두 개가 돕니다.
 인스턴스를 늘리면 무료 등급(리전당 1대)을 벗어나기 때문입니다.
@@ -467,7 +467,7 @@ git commit --allow-empty -m "redeploy" && git push              # 코드 변경 
 
 <div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
 
-## 🗺️ 프로젝트 여정
+## 🗺 프로젝트 여정
 
 ```mermaid
 flowchart LR
