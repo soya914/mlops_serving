@@ -175,7 +175,8 @@ jobs:
           key: ${{ secrets.GCP_SSH_KEY }}
           port: 22
           command_timeout: 10m
-          script_stop: true
+          # script_stop 은 ssh-action v1.2 에서 없어진 입력이라 쓰면 조용히 무시된다.
+          # 대신 스크립트 첫 줄의 `set -e` 가 같은 역할을 한다.
           script: |
             set -e
             HUB=${{ secrets.DOCKERHUB_USERNAME }}

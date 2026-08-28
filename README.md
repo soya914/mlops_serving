@@ -24,6 +24,7 @@
 ### `git push` 한 번이면 — 학습 · 검증 · 이미지 빌드 · GCP 배포 · 응답 확인까지 사람 손이 닿지 않습니다
 
 <a href="#-파이프라인">파이프라인</a> ·
+<a href="#-배포-결과">배포 결과</a> ·
 <a href="#-모델-선택-결과">모델 선택</a> ·
 <a href="#-미리보기">미리보기</a> ·
 <a href="#-아키텍처">아키텍처</a> ·
@@ -119,6 +120,68 @@ flowchart LR
 | 실패 시 확인할 항목 체크리스트 | `deploy` (실패 시) |
 
 </details>
+
+<div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
+
+## 🚀 배포 결과
+
+`git push` 한 번으로 아래까지 자동으로 진행된 실제 실행 기록입니다.
+
+<div align="center">
+<img src="captures/22_actions_run.png" alt="GitHub Actions 실행 결과 — job 3개 모두 성공" width="100%">
+</div>
+
+| Job | 소요 | 결과 |
+|:---|:--:|:--:|
+| 학습 & 테스트 | 28s | ✅ |
+| 이미지 빌드 & 푸시 | 1m 32s | ✅ |
+| GCP VM 배포 | 1m 4s | ✅ |
+| **전체** | **3m 13s** | **✅** |
+
+### 배포된 서비스
+
+<table>
+  <tr>
+    <td width="58%" align="center" valign="top">
+      <img src="captures/20_deployed_model_info.png" alt="배포된 VM 의 /model-info 응답" width="100%"><br>
+      <sub><b>🧠 VM 의 <code>GET /model-info</code></b></sub>
+    </td>
+    <td width="42%" align="center" valign="top">
+      <img src="captures/21_deployed_streamlit.png" alt="배포된 Streamlit" width="100%"><br>
+      <sub><b>🎛️ VM 의 Streamlit</b></sub>
+    </td>
+  </tr>
+</table>
+
+### 배포된 모델이 정말 방금 학습한 것인가
+
+`/model-info` 의 `trained_at` 이 그 증거입니다.
+
+```
+푸시 시각              2026-08-28 03:48:30 UTC
+러너가 학습한 시각      2026-08-28 03:48:55 UTC   ← /model-info 의 trained_at
+```
+
+레포에 커밋돼 있던 `model.joblib` 이 아니라 **러너가 방금 만든 모델**이 이미지에 담겨 VM 까지 갔다는 뜻입니다.
+컨테이너 태그도 커밋 해시로 붙어 있어 어느 코드가 도는지 특정할 수 있습니다.
+
+```
+$ sudo docker ps
+iris-front | soya14/iris-frontend:97429ba1061890...   | Up | 0.0.0.0:8501->8501/tcp
+iris-api   | soya14/iris-classifier:97429ba1061890... | Up | 0.0.0.0:80->8000/tcp
+```
+
+### 외부에서 확인한 결과
+
+| 확인 | 결과 |
+|:---|:---|
+| `GET /health` | `{"status":"ok"}` |
+| `GET /model-info` | `logistic_regression` · CV `0.9583` · 홀드아웃 `0.9333` |
+| `POST /predict` | `{"class_name":"virginica","confidence":0.9565, ...}` |
+| 잘못된 입력(값 3개) | `422` |
+| Streamlit `:8501` | `200` |
+
+> 캡처에 보이는 IP 는 **임시 외부 IP** 입니다. VM 을 중지하면 반납되고 다시 켤 때 바뀝니다.
 
 <div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
 
