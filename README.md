@@ -24,6 +24,7 @@
 ### `git push` 한 번이면 — 학습 · 검증 · 이미지 빌드 · GCP 배포 · 응답 확인까지 사람 손이 닿지 않습니다
 
 <a href="#-파이프라인">파이프라인</a> ·
+<a href="#-모델-선택-결과">모델 선택</a> ·
 <a href="#-미리보기">미리보기</a> ·
 <a href="#-아키텍처">아키텍처</a> ·
 <a href="#-api">API</a> ·
@@ -121,32 +122,70 @@ flowchart LR
 
 <div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
 
+## 📊 모델 선택 결과
+
+아래 수치는 `train.py` 가 실제로 출력해 `metrics.json` 에 남긴 값입니다. 그림도 그 파일에서 생성됩니다.
+
+<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/metrics-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/metrics-light.svg">
+  <img src="docs/assets/metrics-light.svg" alt="모델 선택 결과 — logistic_regression 선택, 홀드아웃 0.9333" width="100%">
+</picture>
+</div>
+
+RandomForest 두 개가 CV 0.9500 으로 동률이고, LogisticRegression 이 0.9583 으로 근소하게 앞섭니다.
+차이가 0.0083 밖에 안 되므로 **CV 만으로 결론 내지 않고**, 학습에도 선택에도 쓰지 않은
+홀드아웃 30건으로 한 번 더 채점합니다. 결과는 0.9333(28/30)으로 게이트 0.90 을 통과했습니다.
+
+<div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
+
 ## 📸 미리보기
+
+아래는 **이 레포의 현재 코드로 빌드한 이미지**를 실제로 띄워 찍은 화면입니다.
+(3일차 캡처는 `:v1` 이미지라 `/model-info` 와 확률 필드가 없어 새로 찍었습니다.)
 
 <table>
   <tr>
-    <td width="50%" align="center">
-      <img src="captures/03_streamlit_before.png" alt="Streamlit 입력 화면" width="100%"><br>
-      <sub><b>🎛️ Streamlit — 슬라이더로 치수 입력</b></sub>
+    <td width="50%" align="center" valign="top">
+      <img src="captures/10_swagger_docs_v2.png" alt="Swagger UI 엔드포인트 목록" width="100%"><br>
+      <sub><b>📘 Swagger UI</b> — 엔드포인트 4개, API v1.1.0</sub>
     </td>
-    <td width="50%" align="center">
-      <img src="captures/04_streamlit_result.png" alt="Streamlit 예측 결과" width="100%"><br>
-      <sub><b>🌸 예측 결과</b></sub>
+    <td width="50%" align="center" valign="top">
+      <img src="captures/13_streamlit_v2.png" alt="Streamlit 예측 화면" width="100%"><br>
+      <sub><b>🎛️ Streamlit</b> — 슬라이더 입력 → 예측 결과</sub>
     </td>
   </tr>
   <tr>
-    <td width="50%" align="center">
-      <img src="captures/01_swagger_docs.png" alt="Swagger UI" width="100%"><br>
-      <sub><b>📘 FastAPI Swagger 문서</b></sub>
+    <td width="50%" align="center" valign="top">
+      <img src="captures/11_swagger_predict_v2.png" alt="POST /predict 200 응답" width="100%"><br>
+      <sub><b>🔮 POST /predict</b> — <code>virginica</code>, confidence 0.9565, 확률 분포 포함</sub>
     </td>
-    <td width="50%" align="center">
-      <img src="captures/02_swagger_predict_result.png" alt="POST /predict 응답" width="100%"><br>
-      <sub><b>⚡ POST /predict 200 OK</b></sub>
+    <td width="50%" align="center" valign="top">
+      <img src="captures/12_swagger_model_info.png" alt="GET /model-info 응답" width="100%"><br>
+      <sub><b>🧠 GET /model-info</b> — 서빙 중인 모델과 성능이 그대로 노출</sub>
     </td>
   </tr>
 </table>
 
-<sub>※ 캡처는 3일차 수동 배포 시점의 화면입니다. 이후 API 에 <code>/model-info</code> 와 확률 필드가 추가됐습니다.</sub>
+`/model-info` 응답의 `logistic_regression` · `0.9583` · `0.9333` 은 위 차트의 값과 같습니다.
+**학습 → 이미지 → 서빙까지 같은 모델이 흘러간다**는 것을 이 화면으로 확인할 수 있습니다.
+
+<details>
+<summary><b>📷 3일차(수동 배포) 캡처도 보기</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="captures/03_streamlit_before.png" alt="3일차 Streamlit" width="100%"><br><sub>3일차 Streamlit</sub></td>
+    <td width="50%" align="center"><img src="captures/05_dockerhub_iris-classifier.png" alt="Docker Hub" width="100%"><br><sub>Docker Hub 태그 페이지</sub></td>
+  </tr>
+</table>
+
+캡처를 다시 만들려면 컨테이너를 띄운 뒤 `python captures/capture_v2.py` 를 실행합니다.
+
+</details>
 
 <div align="center"><img src="docs/assets/divider.svg" width="100%" alt=""></div>
 
